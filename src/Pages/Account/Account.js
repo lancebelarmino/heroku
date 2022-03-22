@@ -70,7 +70,10 @@ const Account = () => {
     await provider.send('eth_requestAccounts', []);
     const signer = await provider.getSigner();
     const signerAddy = await signer.getAddress();
+    const balancePromise = await otoContract.balanceOf(signerAddy);
+    const balance = tokenFormatEther(balancePromise);
 
+    setSignerBalance(balance);
     setSignerAddy(signerAddy);
   };
 
@@ -98,12 +101,14 @@ const Account = () => {
     getAvaxPrice();
   }, [getLPBalance, getTokenPrice]);
 
+  const roiAmount = calculateCompoundingRate(signerBalance, 480, 0.0002355);
+
   const data = [
     { label: 'OTO Protocol Price', price: otoPrice ? `$${otoPrice}` : '$0' },
     { label: 'Next Reward Yield', price: `0.02355%` },
     { label: 'Next Reward Amount', price: `${signerBalance * 0.02355}%` },
     { label: 'ROI (5-Day Rate)', price: `11.96%` },
-    { label: 'ROI (5-Day Rate) Amount', price: `${calculateCompoundingRate(signerBalance, 480, 0.0002355)}` },
+    { label: 'ROI (5-Day Rate) Amount', price: `${roiAmount}` },
   ];
 
   const rows = data.map((item) => (
