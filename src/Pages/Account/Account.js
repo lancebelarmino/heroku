@@ -46,7 +46,7 @@ const Account = () => {
     for (var i = 0; i < rebaseTimes; i++) {
       amount += amount * rate;
     }
-    return amount.toFixed(tokenDecimal);
+    return amount;
   };
 
   const getLPBalance = useCallback(async () => {
@@ -101,7 +101,7 @@ const Account = () => {
     getAvaxPrice();
   }, [getLPBalance, getTokenPrice]);
 
-  const roiAmount = calculateCompoundingRate(signerBalance, 480, 0.0002355);
+  const roiAmount = calculateCompoundingRate(signerBalance, 480, 0.0002355).toFixed(tokenDecimal);
 
   const data = [
     { label: 'OTO Protocol Price', price: otoPrice ? `$${otoPrice}` : '$0' },
