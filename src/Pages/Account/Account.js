@@ -72,8 +72,9 @@ const Account = () => {
     const signerAddy = await signer.getAddress();
     const balancePromise = await otoContract.balanceOf(signerAddy);
     const balance = tokenFormatEther(balancePromise);
+    const parsedBalance = parseFloat(balance);
 
-    setSignerBalance(balance);
+    setSignerBalance(parsedBalance);
     setSignerAddy(signerAddy);
   };
 
@@ -104,9 +105,9 @@ const Account = () => {
   const data = [
     { label: 'OTO Protocol Price', price: otoPrice ? `$${otoPrice}` : '$0' },
     { label: 'Next Reward Yield', price: `0.02355%` },
-    { label: 'Next Reward Amount', price: `${signerBalance * 0.0002355}` },
+    { label: 'Next Reward Amount', price: `${(signerBalance * 0.0002355).toFixed(tokenDecimal)}` },
     { label: 'ROI (5-Day Rate)', price: `11.96%` },
-    { label: 'ROI (5-Day Rate) Amount', price: `${parseFloat(calculateCompoundingRate(signerBalance, 480, 0.0002355)).toFixed(5)}` },
+    { label: 'ROI (5-Day Rate) Amount', price: `${calculateCompoundingRate(signerBalance, 480, 0.0002355).toFixed(tokenDecimal)}` },
   ];
 
   const rows = data.map((item) => (
@@ -136,7 +137,7 @@ const Account = () => {
       <section className={classes.row}>
         <Card>
           <div className={classes.grid}>
-            <CardItem type="icon" layout="flex" data={{ icon: Balance, title: `$${signerBalance}`, description: 'Your Balance' }} />
+            <CardItem type="icon" layout="flex" data={{ icon: Balance, title: `$${signerBalance.toFixed(2)}`, description: 'Your Balance' }} />
             <CardItem type="icon" layout="flex" data={{ icon: APY, title: '392,537%', description: 'APY' }} />
             <CardItem type="icon" layout="flex" data={{ icon: NextRebase, title: '00:14:35', description: 'Next Rebase' }} />
           </div>
