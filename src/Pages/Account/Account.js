@@ -46,7 +46,7 @@ const Account = () => {
     for (var i = 0; i < rebaseTimes; i++) {
       amount += amount * rate;
     }
-    return amount;
+    return amount.toFixed(tokenDecimal);
   };
 
   const getLPBalance = useCallback(async () => {
