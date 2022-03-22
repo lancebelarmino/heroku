@@ -42,7 +42,7 @@ const Account = () => {
     return ethers.utils.formatUnits(value, tokenDecimal);
   };
 
-  const calculateCompoundingRate = (amount = 0, rebaseTimes, rate) => {
+  const calculateCompoundingRate = (amount, rebaseTimes, rate) => {
     for (var i = 0; i < rebaseTimes; i++) {
       amount += amount * rate;
     }
@@ -104,7 +104,7 @@ const Account = () => {
   const data = [
     { label: 'OTO Protocol Price', price: otoPrice ? `$${otoPrice}` : '$0' },
     { label: 'Next Reward Yield', price: `0.02355%` },
-    { label: 'Next Reward Amount', price: `${signerBalance * 0.02355}%` },
+    { label: 'Next Reward Amount', price: `${signerBalance * 0.0002355}%` },
     { label: 'ROI (5-Day Rate)', price: `11.96%` },
     { label: 'ROI (5-Day Rate) Amount', price: `${parseFloat(calculateCompoundingRate(signerBalance, 480, 0.0002355)).toFixed(5)}` },
   ];
