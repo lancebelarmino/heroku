@@ -6,6 +6,7 @@ import ScreenSection from '../../components/Layouts/ScreenSection';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import CardItem from '../../components/Card/CardItem';
+import Countdown from 'react-countdown';
 import { ReactComponent as Wallet } from '../../assets/btn-wallet.svg';
 import { ReactComponent as Balance } from '../../assets/screen-balance.svg';
 import { ReactComponent as APY } from '../../assets/screen-apy.svg';
@@ -30,6 +31,7 @@ const Account = () => {
       walletAddress: '',
     },
   });
+  const [countdownKey, setCountdownKey] = useState(1);
   const { classes } = useStyles();
 
   const avaxProvider = useMemo(() => new ethers.providers.getDefaultProvider('https://api.avax.network/ext/bc/C/rpc'), []);
@@ -137,9 +139,19 @@ const Account = () => {
       <section className={classes.row}>
         <Card>
           <div className={classes.grid}>
-            <CardItem type="icon" layout="flex" data={{ icon: Balance, title: `$${signerBalance.toFixed(2)}`, description: 'Your Balance' }} />
+            <CardItem type="icon" layout="flex" data={{ icon: Balance, title: `${signerBalance.toFixed(2)}`, description: 'Your Balance' }} />
             <CardItem type="icon" layout="flex" data={{ icon: APY, title: '392,537%', description: 'APY' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: NextRebase, title: '00:14:35', description: 'Next Rebase' }} />
+            <CardItem type="custom">
+              <div className={classes.cardItem}>
+                <NextRebase />
+                <div className={classes.cardText}>
+                  <Countdown key={countdownKey} className={classes.cardTimer} date={Date.now() + 50000} onComplete={() => setCountdownKey((prevData) => prevData + 1)} />
+                  <Text className={classes.cardDescription} size="sm">
+                    Next Rebase
+                  </Text>
+                </div>
+              </div>
+            </CardItem>
           </div>
         </Card>
       </section>
