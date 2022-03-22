@@ -7,6 +7,15 @@ const useStyles = createStyles((theme) => ({
     textAlign: 'right',
   },
 
+  connected: {
+    display: 'inline-flex',
+  },
+
+  connectedMessage: {
+    marginRight: 8,
+    color: theme.colors.gray[4],
+  },
+
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, auto)',
@@ -52,7 +61,7 @@ const useStyles = createStyles((theme) => ({
       marginBottom: 16,
     },
 
-    '&:nth-child(even)': {
+    '&:nth-of-type(even)': {
       background: theme.colors.gray[0],
     },
   },

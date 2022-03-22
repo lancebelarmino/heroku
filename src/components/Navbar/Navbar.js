@@ -16,7 +16,7 @@ const menu = [
   { link: '/account', label: 'Account', icon: Account, isScreen: true },
   { link: '/calculator', label: 'Calculator', icon: Calculator, isScreen: true },
   { link: '', label: 'Swap', icon: Swap, isScreen: false },
-  { link: '', label: 'Whitepaper', icon: Whitepaper, isScreen: false },
+  { link: 'https://oto-protocol.gitbook.io/oto-protocol/', label: 'Whitepaper', icon: Whitepaper, isScreen: false },
   { link: 'https://otoprotocol.info/', label: 'Oto Protocol', icon: Website, isScreen: false },
 ];
 
