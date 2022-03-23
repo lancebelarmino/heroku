@@ -15,7 +15,7 @@ const menu = [
   { link: '/dashboard', label: 'Dashboard', icon: Dashboard, isScreen: true },
   { link: '/account', label: 'Account', icon: Account, isScreen: true },
   { link: '/calculator', label: 'Calculator', icon: Calculator, isScreen: true },
-  { link: '', label: 'Swap', icon: Swap, isScreen: false },
+  { link: 'https://traderjoexyz.com/trade?outputCurrency=0x3e5a9f09923936427ad6e487b24e23a862fcf6b7#/', label: 'Swap', icon: Swap, isScreen: false },
   { link: 'https://oto-protocol.gitbook.io/oto-protocol/', label: 'Whitepaper', icon: Whitepaper, isScreen: false },
   { link: 'https://otoprotocol.info/', label: 'Oto Protocol', icon: Website, isScreen: false },
 ];

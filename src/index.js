@@ -10,10 +10,10 @@ import AppSection from './components/Layouts/AppSection';
 import theme from './styles/theme';
 import components from './styles/components';
 import global from './styles/global';
-import Oto from './Pages/Oto';
-import OtoClassBased from './Pages/OtoClassBased';
-import Content from './Pages/Content';
-import Base from './Pages/Base';
+// import Oto from './Pages/Oto';
+// import OtoClassBased from './Pages/OtoClassBased';
+// import Content from './Pages/Content';
+// import Base from './Pages/Base';
 // import Home from './Pages/Home';
 
 const App = () => {
@@ -29,11 +29,11 @@ const App = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/account" element={<Account />} />
               <Route path="/calculator" element={<Calculator />} />
-              {/* <Route path="/" exact element={<Home />} /> */}
+              {/* <Route path="/" exact element={<Home />} />
               <Route path="/oto" element={<Oto />} />
               <Route path="/otoclass" element={<OtoClassBased />} />
               <Route path="/content" element={<Content />} />
-              <Route path="/base" element={<Base />} />
+              <Route path="/base" element={<Base />} /> */}
             </Routes>
           </AppSection>
         </Router>

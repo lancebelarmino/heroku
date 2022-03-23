@@ -172,17 +172,17 @@ const Dashboard = () => {
       <section className={classes.row}>
         <SimpleGrid cols={3} spacing={40}>
           <Card>
-            <CardItem type="icon" layout="center" data={{ icon: AvaxLiquidity, title: (lpBalance.avax * avaxPrice).toFixed(tokenDecimal), description: 'AVAX Liquidity Value' }} />
+            <CardItem type="icon" layout="center" data={{ icon: AvaxLiquidity, title: `$${(lpBalance.avax * avaxPrice).toFixed(tokenDecimal)}`, description: 'AVAX Liquidity Value' }} />
           </Card>
           <Card>
             <CardItem
               type="icon"
               layout="center"
-              data={{ icon: MarketTreasury, title: (taxReceiverBalances.treasury * avaxPrice).toFixed(tokenDecimal), description: 'Market Value Of Treasury Asset' }}
+              data={{ icon: MarketTreasury, title: `$${(taxReceiverBalances.treasury * avaxPrice).toFixed(tokenDecimal)}`, description: 'Market Value Of Treasury Asset' }}
             />
           </Card>
           <Card>
-            <CardItem type="icon" layout="center" data={{ icon: OtoVault, title: (taxReceiverBalances.vault * avaxPrice).toFixed(tokenDecimal), description: 'OTO Vault Value' }} />
+            <CardItem type="icon" layout="center" data={{ icon: OtoVault, title: `$${(taxReceiverBalances.vault * avaxPrice).toFixed(tokenDecimal)}`, description: 'OTO Vault Value' }} />
           </Card>
         </SimpleGrid>
       </section>
