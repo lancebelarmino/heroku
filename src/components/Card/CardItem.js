@@ -14,7 +14,7 @@ const CardItem = ({ children, type, layout = 'flex', data }) => {
     <>
       {data && (
         <div className={classes[itemClass]}>
-          <data.icon />
+          {data.icon && <data.icon />}
           <div className={classes[textClass]}>
             <Title className={classes.title} order={2}>
               {data.title}

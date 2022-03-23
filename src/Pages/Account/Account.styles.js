@@ -7,15 +7,6 @@ const useStyles = createStyles((theme) => ({
     textAlign: 'right',
   },
 
-  connected: {
-    display: 'inline-flex',
-  },
-
-  connectedMessage: {
-    marginRight: 8,
-    color: theme.colors.gray[4],
-  },
-
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, auto)',

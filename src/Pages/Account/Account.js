@@ -6,12 +6,12 @@ import ScreenSection from '../../components/Layouts/ScreenSection';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import CardItem from '../../components/Card/CardItem';
+import ConnectedMessage from '../../components/Button/ConnectedMessage';
 import Countdown from 'react-countdown';
 import { ReactComponent as Wallet } from '../../assets/btn-wallet.svg';
 import { ReactComponent as Balance } from '../../assets/screen-balance.svg';
 import { ReactComponent as APY } from '../../assets/screen-apy.svg';
 import { ReactComponent as NextRebase } from '../../assets/screen-next-rebase.svg';
-import { ReactComponent as Secure } from '../../assets/screen-secure.svg';
 import useStyles from './Account.styles.js';
 import { ethers } from 'ethers';
 import otoAbi from '../../ABI/otoAbi.json';
@@ -119,16 +119,13 @@ const Account = () => {
     </tr>
   ));
 
+  console.log();
+
   return (
     <ScreenSection>
       <div className={classes.btn}>
         {signerAddy ? (
-          <div className={classes.connected}>
-            <Text className={classes.connectedMessage} size="md">
-              Wallet Connected
-            </Text>
-            <Secure />
-          </div>
+          <ConnectedMessage />
         ) : (
           <Button type="button" icon={Wallet} onClick={connectWallet}>
             Connect Wallet
@@ -145,7 +142,7 @@ const Account = () => {
               <div className={classes.cardItem}>
                 <NextRebase />
                 <div className={classes.cardText}>
-                  <Countdown key={countdownKey} className={classes.cardTimer} date={Date.now() + 50000} onComplete={() => setCountdownKey((prevData) => prevData + 1)} />
+                  <Countdown key={countdownKey} className={classes.cardTimer} date={Date.now() + 900000} onComplete={() => setCountdownKey((prevData) => prevData + 1)} />
                   <Text className={classes.cardDescription} size="sm">
                     Next Rebase
                   </Text>

@@ -19,6 +19,22 @@ const useStyles = createStyles((theme) => ({
       marginBottom: 40,
     },
   },
+
+  cardItem: {
+    display: 'flex',
+    gap: 32,
+  },
+
+  cardTimer: {
+    fontSize: 32,
+    lineHeight: 1.25,
+    fontWeight: 700,
+  },
+
+  cardDescription: {
+    marginTop: 8,
+    color: theme.colors.gray[4],
+  },
 }));
 
 export default useStyles;
