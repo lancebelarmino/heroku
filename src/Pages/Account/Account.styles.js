@@ -3,6 +3,8 @@ import { createStyles } from '@mantine/core';
 const useStyles = createStyles((theme) => ({
   btn: {
     display: 'block',
+    position: 'relative',
+    zIndex: 888,
     marginBottom: 40,
     textAlign: 'right',
   },
@@ -12,6 +14,14 @@ const useStyles = createStyles((theme) => ({
     gridTemplateColumns: 'repeat(3, auto)',
     justifyContent: 'space-between',
     rowGap: 40,
+
+    [theme.fn.smallerThan('md')]: {
+      gridTemplateColumns: 'repeat(2, auto)',
+    },
+
+    [theme.fn.smallerThan('sm')]: {
+      gridTemplateColumns: 'repeat(1, auto)',
+    },
   },
 
   row: {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Navbar as Nav, Group, Anchor } from '@mantine/core';
+import { Navbar as Nav, Group, Anchor, Burger } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { ReactComponent as Logo } from '../../assets/nav-logo.svg';
 import { ReactComponent as Dashboard } from '../../assets/nav-dashboard.svg';
 import { ReactComponent as Account } from '../../assets/nav-account.svg';
@@ -24,6 +25,8 @@ const Navbar = () => {
   const location = useLocation();
   const { classes, cx } = useStyles();
   const [active, setActive] = useState();
+  const [opened, setOpened] = useState(false);
+  const isTablet = useMediaQuery('(max-width: 1024px)');
 
   const path = location.pathname.split('/').pop();
   const currentPage = toCapitalize(path);
@@ -42,6 +45,7 @@ const Navbar = () => {
       onClick={(e) => {
         if (item.isScreen) {
           setActive(item.label);
+          setOpened(false);
         }
       }}
       target={item.isScreen ? '' : '_blank'}
@@ -52,21 +56,38 @@ const Navbar = () => {
   ));
 
   return (
-    <Nav
-      classNames={{
-        root: classes.nav,
-        hidden: classes.navHidden,
-      }}
-      height={700}
-      width={{ sm: 300 }}
-      p="md">
-      <Nav.Section grow>
-        <Group className={classes.header} position="apart">
-          <Logo />
-        </Group>
-        {links}
-      </Nav.Section>
-    </Nav>
+    <>
+      {isTablet ? (
+        <>
+          <Burger className={classes.burger} color="#242C4E" opened={opened} onClick={() => setOpened((o) => !o)} />
+          {opened && (
+            <Nav
+              classNames={{
+                root: classes.mobileNav,
+              }}
+              p="md">
+              <Nav.Section grow>{links}</Nav.Section>
+            </Nav>
+          )}
+        </>
+      ) : (
+        <Nav
+          classNames={{
+            root: classes.nav,
+            hidden: classes.navHidden,
+          }}
+          height={700}
+          width={{ sm: 300 }}
+          p="md">
+          <Nav.Section grow>
+            <Group className={classes.header} position="apart">
+              <Logo />
+            </Group>
+            {links}
+          </Nav.Section>
+        </Nav>
+      )}
+    </>
   );
 };
 

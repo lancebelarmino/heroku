@@ -15,6 +15,25 @@ const useStyles = createStyles((theme, _params, getRef) => {
       height: '100vh',
     },
 
+    mobileNav: {
+      position: 'absolute',
+      zIndex: 1,
+      top: 0,
+      width: '100% !important',
+      padding: '7.5rem 2.5rem 2.5rem 2.5rem !important',
+      background: theme.colors.white[0],
+      borderRight: '2px solid rgba(53, 25, 106, 0.04);',
+      height: 'auto',
+      boxShadow: theme.shadows.sm,
+    },
+
+    burger: {
+      position: 'absolute',
+      zIndex: 999,
+      top: 40,
+      left: 40,
+    },
+
     header: {
       marginBottom: 80,
     },

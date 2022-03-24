@@ -131,7 +131,18 @@ const Account = () => {
               <div className={classes.cardItem}>
                 <NextRebase />
                 <div className={classes.cardText}>
-                  <Countdown key={countdownKey} className={classes.cardTimer} date={Date.now() + 900000} onComplete={() => setCountdownKey((prevData) => prevData + 1)} />
+                  <Countdown
+                    key={countdownKey}
+                    date={Date.now() + 900000}
+                    renderer={({ minutes, seconds }) => {
+                      return (
+                        <span className={classes.cardTimer}>
+                          {minutes}:{seconds}
+                        </span>
+                      );
+                    }}
+                    onComplete={() => setCountdownKey((prevData) => prevData + 1)}
+                  />
                   <Text className={classes.cardDescription} size="sm">
                     Next Rebase
                   </Text>

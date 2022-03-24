@@ -200,12 +200,12 @@ const Calculator = () => {
       </section>
 
       <section className={classes.row}>
-        <SimpleGrid cols={3} spacing={40}>
+        <SimpleGrid cols={3} spacing={40} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
           <Card>
             <CardItem type="icon" layout="center" data={{ title: result.rewardAmount, description: 'Next Reward Amount' }} />
           </Card>
           <Card>
-            <CardItem type="icon" layout="center" data={{ title: result.tokenBalance, description: 'TOKEN Balance' }} />
+            <CardItem type="icon" layout="center" data={{ title: parseFloat(result.tokenBalance).toFixed(2), description: 'TOKEN Balance' }} />
           </Card>
           <Card>
             <CardItem type="icon" layout="center" data={{ title: `$${result.amountOfTokenUSD}`, description: 'Total USD Balance' }} />
@@ -222,7 +222,18 @@ const Calculator = () => {
               <div className={classes.cardItem}>
                 <NextRebase />
                 <div className={classes.cardText}>
-                  <Countdown key={countdownKey} className={classes.cardTimer} date={Date.now() + 900000} onComplete={() => setCountdownKey((prevData) => prevData + 1)} />
+                  <Countdown
+                    key={countdownKey}
+                    date={Date.now() + 900000}
+                    renderer={({ minutes, seconds }) => {
+                      return (
+                        <span className={classes.cardTimer}>
+                          {minutes}:{seconds}
+                        </span>
+                      );
+                    }}
+                    onComplete={() => setCountdownKey((prevData) => prevData + 1)}
+                  />
                   <Text className={classes.cardDescription} size="sm">
                     Next Rebase
                   </Text>

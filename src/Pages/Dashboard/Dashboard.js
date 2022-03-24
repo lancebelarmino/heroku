@@ -94,7 +94,7 @@ const Dashboard = () => {
     const firepitSupply = taxReceiverBalances.firepit;
     const totalSupply = tokenFormatEther(response);
     const firepitPercentage = ((firepitSupply / totalSupply) * 100).toFixed(2);
-    const circulatingSupply = (totalSupply - firepitSupply).toFixed(tokenDecimal);
+    const circulatingSupply = (totalSupply - firepitSupply).toFixed(2);
 
     setTokenSupply({
       totalSupply: totalSupply,
@@ -145,44 +145,47 @@ const Dashboard = () => {
       <section className={classes.row}>
         <Card>
           <div className={classes.grid}>
+            <CardItem type="icon" layout="flex" data={{ icon: MarketCap, title: `$${(otoPrice * (tokenSupply.totalSupply - taxReceiverBalances.firepit)).toFixed(2)}`, description: 'Market Cap' }} />
             <CardItem type="icon" layout="flex" data={{ icon: OtoPrice, title: `$${otoPrice}`, description: 'OTO Protocol Price' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: BackedLiquidity, title: '100%', description: 'Backed Liquidity' }} />
-            <CardItem
-              type="icon"
-              layout="flex"
-              data={{ icon: MarketCap, title: `$${(otoPrice * (tokenSupply.totalSupply - taxReceiverBalances.firepit)).toFixed(tokenDecimal)}`, description: 'Market Cap' }}
-            />
-            <CardItem type="icon" layout="flex" data={{ icon: CirculatingSupply, title: tokenSupply.circulatingSupply, description: 'Circulating Supply' }} />
             <CardItem type="custom">
               <div className={classes.cardItem}>
                 <NextRebase />
                 <div className={classes.cardText}>
-                  <Countdown key={countdownKey} className={classes.cardTimer} date={Date.now() + 900000} onComplete={() => setCountdownKey((prevData) => prevData + 1)} />
+                  <Countdown
+                    key={countdownKey}
+                    date={Date.now() + 900000}
+                    renderer={({ minutes, seconds }) => {
+                      return (
+                        <span className={classes.cardTimer}>
+                          {minutes}:{seconds}
+                        </span>
+                      );
+                    }}
+                    onComplete={() => setCountdownKey((prevData) => prevData + 1)}
+                  />
                   <Text className={classes.cardDescription} size="sm">
                     Next Rebase
                   </Text>
                 </div>
               </div>
             </CardItem>
-            <CardItem type="icon" layout="flex" data={{ icon: TotalSupply, title: tokenSupply.totalSupply, description: 'Total Supply' }} />
+            <CardItem type="icon" layout="flex" data={{ icon: TotalSupply, title: parseFloat(tokenSupply.totalSupply).toFixed(2), description: 'Total Supply' }} />
+            <CardItem type="icon" layout="flex" data={{ icon: CirculatingSupply, title: tokenSupply.circulatingSupply, description: 'Circulating Supply' }} />
+            <CardItem type="icon" layout="flex" data={{ icon: BackedLiquidity, title: '100%', description: 'Backed Liquidity' }} />
           </div>
         </Card>
       </section>
 
       <section className={classes.row}>
-        <SimpleGrid cols={3} spacing={40}>
+        <SimpleGrid cols={3} spacing={40} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
           <Card>
-            <CardItem type="icon" layout="center" data={{ icon: AvaxLiquidity, title: `$${(lpBalance.avax * avaxPrice).toFixed(tokenDecimal)}`, description: 'AVAX Liquidity Value' }} />
+            <CardItem type="icon" layout="center" data={{ icon: AvaxLiquidity, title: `$${(lpBalance.avax * avaxPrice).toFixed(2)}`, description: 'AVAX Liquidity Value' }} />
           </Card>
           <Card>
-            <CardItem
-              type="icon"
-              layout="center"
-              data={{ icon: MarketTreasury, title: `$${(taxReceiverBalances.treasury * avaxPrice).toFixed(tokenDecimal)}`, description: 'Market Value Of Treasury Asset' }}
-            />
+            <CardItem type="icon" layout="center" data={{ icon: MarketTreasury, title: `$${(taxReceiverBalances.treasury * avaxPrice).toFixed(2)}`, description: 'Market Value Of Treasury Asset' }} />
           </Card>
           <Card>
-            <CardItem type="icon" layout="center" data={{ icon: OtoVault, title: `$${(taxReceiverBalances.vault * avaxPrice).toFixed(tokenDecimal)}`, description: 'OTO Vault Value' }} />
+            <CardItem type="icon" layout="center" data={{ icon: OtoVault, title: `$${(taxReceiverBalances.vault * avaxPrice).toFixed(2)}`, description: 'OTO Vault Value' }} />
           </Card>
         </SimpleGrid>
       </section>
@@ -190,7 +193,7 @@ const Dashboard = () => {
       <section className={classes.row}>
         <Card>
           <div className={classes.grid}>
-            <CardItem type="icon" layout="flex" data={{ icon: CauldronRank, title: taxReceiverBalances.firepit, description: '# Value Of The Cauldron ' }} />
+            <CardItem type="icon" layout="flex" data={{ icon: CauldronRank, title: parseFloat(taxReceiverBalances.firepit).toFixed(2), description: '# Value Of The Cauldron ' }} />
             <CardItem type="icon" layout="flex" data={{ icon: CauldronValue, title: `$${(taxReceiverBalances.firepit * otoPrice).toFixed(2)}`, description: '$ Value Of The Cauldron ' }} />
             <CardItem type="icon" layout="flex" data={{ icon: CauldronSupply, title: `${tokenSupply.firepitPercentage}%`, description: '% The Cauldron Supply' }} />
           </div>
