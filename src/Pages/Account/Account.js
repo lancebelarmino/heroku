@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import Axios from 'axios';
-import { Title, TextInput, Divider, Text } from '@mantine/core';
+import { ethers } from 'ethers';
+import otoAbi from '../../ABI/otoAbi.json';
+import wavaxAbi from '../../wavaxAbi.json';
+import { Title, Divider, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import Countdown from 'react-countdown';
 import ScreenSection from '../../components/Layouts/ScreenSection';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import CardItem from '../../components/Card/CardItem';
 import ConnectedMessage from '../../components/Button/ConnectedMessage';
-import Countdown from 'react-countdown';
 import { ReactComponent as Wallet } from '../../assets/btn-wallet.svg';
 import { ReactComponent as Balance } from '../../assets/screen-balance.svg';
 import { ReactComponent as APY } from '../../assets/screen-apy.svg';
 import { ReactComponent as NextRebase } from '../../assets/screen-next-rebase.svg';
 import useStyles from './Account.styles.js';
-import { ethers } from 'ethers';
-import otoAbi from '../../ABI/otoAbi.json';
-import wavaxAbi from '../../wavaxAbi.json';
 
 const Account = () => {
   const [avaxPrice, setAvaxPrice] = useState(0);
@@ -78,17 +78,6 @@ const Account = () => {
 
     setSignerBalance(parsedBalance);
     setSignerAddy(signerAddy);
-  };
-
-  const getSignerBalance = async () => {
-    if (!signerAddy) {
-      await connectWallet();
-    } else {
-      const balancePromise = await otoContract.balanceOf(signerAddy);
-      const balance = tokenFormatEther(balancePromise);
-
-      setSignerBalance(balance);
-    }
   };
 
   useEffect(() => {
@@ -155,20 +144,6 @@ const Account = () => {
 
       <section className={classes.row}>
         <Card>
-          <div className={classes.row}>
-            <Title className={classes.title} order={5}>
-              Import from wallet address
-            </Title>
-            <div className={classes.address}>
-              <TextInput className={classes.addressInput} placeholder="Wallet Address" onBlur={(event) => form.setFieldValue('walletAddress', event.currentTarget.value)} />
-              <div>
-                <Button className={classes.btnImport} type="submit" onClick={getSignerBalance}>
-                  Import
-                </Button>
-              </div>
-            </div>
-          </div>
-
           <div>
             <Title className={classes.title} order={5}>
               Wallet Details

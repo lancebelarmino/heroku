@@ -48,22 +48,20 @@ const useStyles = createStyles((theme) => ({
     color: theme.colors.gray[4],
   },
 
-  stats: {
-    marginBottom: 40,
-  },
-
-  address: {
+  cardItem: {
     display: 'flex',
-    alignItems: 'end',
-    gap: 40,
+    gap: 32,
   },
 
-  addressInput: {
-    width: '100%',
+  cardTimer: {
+    fontSize: 32,
+    lineHeight: 1.25,
+    fontWeight: 700,
   },
 
-  btnImport: {
-    width: '140px',
+  cardDescription: {
+    marginTop: 8,
+    color: theme.colors.gray[4],
   },
 }));
 
