@@ -1,15 +1,11 @@
-import React, { useState, useCallback, useMemo, useEffect, useContext } from 'react';
-import Axios from 'axios';
-import { ethers } from 'ethers';
-import otoAbi from '../../ABI/otoAbi.json';
-import wavaxAbi from '../../wavaxAbi.json';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { Title, Text, Grid, NumberInput, Slider, Group, SimpleGrid } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import Countdown from 'react-countdown';
 import ScreenSection from '../../components/Layouts/ScreenSection';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import CardItem from '../../components/Card/CardItem';
+import Timer from '../../components/Timer/Timer';
 import { ReactComponent as Wallet } from '../../assets/btn-wallet.svg';
 import { ReactComponent as Balance } from '../../assets/screen-balance.svg';
 import { ReactComponent as APY } from '../../assets/screen-apy.svg';
@@ -21,7 +17,6 @@ import EtherContext from '../../context/EtherContext';
 const Calculator = () => {
   const { data, walletData, signerAddy, connectWallet, calculateCompoundingRate } = useContext(EtherContext);
   const [result, setResult] = useState({ rewardAmount: 0, tokenBalance: 0, amountOfTokenUSD: 0 });
-  const [countdownKey, setCountdownKey] = useState(1);
   const form = useForm({
     initialValues: {
       otoPrice: data.otoPrice,
@@ -157,18 +152,7 @@ const Calculator = () => {
               <div className={classes.cardItem}>
                 <NextRebase />
                 <div className={classes.cardText}>
-                  <Countdown
-                    key={countdownKey}
-                    date={Date.now() + 900000}
-                    renderer={({ minutes, seconds }) => {
-                      return (
-                        <span className={classes.cardTimer}>
-                          {minutes}:{seconds}
-                        </span>
-                      );
-                    }}
-                    onComplete={() => setCountdownKey((prevData) => prevData + 1)}
-                  />
+                  <Timer />
                   <Text className={classes.cardDescription} size="sm">
                     Next Rebase
                   </Text>
