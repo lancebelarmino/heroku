@@ -1,5 +1,5 @@
 import React from "react";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import Axios from "axios";
 import CardDetail from "./CardDetail";
 import otoAbi from "../ABI/otoAbi.json";
@@ -60,6 +60,7 @@ class OtoClassBased extends React.Component {
 			},
 			signerAddy: "",
 			signerBalance: 0,
+			initRebasedTime: 0,
 		};
 
 		this.handleCalculateChange = this.handleCalculateChange.bind(this);
@@ -67,6 +68,10 @@ class OtoClassBased extends React.Component {
 
 	tokenFormatEther(value) {
 		return ethers.utils.formatUnits(value, this.state.tokenDecimal);
+	}
+
+	wavaxFormatEther(value) {
+		return ethers.utils.formatUnits(value, 18);
 	}
 
 	async getLPBalance() {
@@ -88,17 +93,17 @@ class OtoClassBased extends React.Component {
 		const firepitBalance = await this.state.otoContract.balanceOf(
 			this.state.firepitAddress
 		);
-		const vaultBalance = await this.state.otoContract.balanceOf(
+		const vaultBalance = await this.state.wavaxContract.balanceOf(
 			this.state.vaultAddress
 		);
-		const treasuryBalance = await this.state.otoContract.balanceOf(
+		const treasuryBalance = await this.state.wavaxContract.balanceOf(
 			this.state.treasuryAddress
 		);
 		this.setState({
 			taxReceiverBalances: {
 				firepit: this.tokenFormatEther(firepitBalance),
-				vault: this.tokenFormatEther(vaultBalance),
-				treasury: this.tokenFormatEther(treasuryBalance),
+				vault: this.wavaxFormatEther(vaultBalance),
+				treasury: this.wavaxFormatEther(treasuryBalance),
 			},
 		});
 	}
@@ -118,7 +123,6 @@ class OtoClassBased extends React.Component {
 			return 0;
 		}
 	}
-
 	async getTotalSupply() {
 		let totalSupply;
 		let firepitSupply = this.state.taxReceiverBalances.firepit;
@@ -135,6 +139,24 @@ class OtoClassBased extends React.Component {
 		});
 	}
 
+	async getInitRebasedTime() {
+		const startTime = await this.state.otoContract._initRebaseStartTime();
+		let startTimeNumber = startTime.toNumber();
+		this.setState({
+			initRebasedTime: startTimeNumber
+		});
+	}
+
+	getSecondsPastLastRebased() {
+		const currentTime = Math.floor(new Date().getTime()/1000.0); //use epochconverter.com 's way to get without milliseconds
+		console.log('currentTIme', currentTime);
+
+		const difference = (currentTime - this.state.initRebasedTime); //900 because 60 * 15. 
+		console.log('difference', difference);
+		const secondsPastLastRebase = difference % 900;
+		console.log('secondsPastLastRebase', secondsPastLastRebase);
+	}
+
 	getTokenInUsd(balance) {
 		if (this.state.otoPrice) {
 			return balance * this.state.otoPrice;
@@ -146,7 +168,7 @@ class OtoClassBased extends React.Component {
 		this.setState({ value: days });
 		const rebaseTimesPerDay = 96;
 		const rebaseRate = 0.02355 / 100;
-		const tokenAmount = 1; //dynamic from another input field
+		const tokenAmount = 7103; //dynamic from another input field
 		let amountOfToken = this.calculateCompoundingRate(
 			tokenAmount,
 			rebaseTimesPerDay * days,
@@ -154,6 +176,12 @@ class OtoClassBased extends React.Component {
 		);
 		this.setState({ result: amountOfToken });
 	}
+
+	// var days = 1;
+	// var amount = 1080;
+	// for (var i = 0; i < 96 * days; i++) {
+	// 	amount += amount * 0.0002355;
+	// }
 
 	calculateCompoundingRate(amount, rebaseTimes, rate) {
 		for (var i = 0; i < rebaseTimes; i++) {
@@ -169,9 +197,11 @@ class OtoClassBased extends React.Component {
 			this.setState({ avaxPrice: response.data.coin.price });
 		});
 		await this.getLPBalance();
-		await this.getTotalSupply();
 		await this.getTaxReceiverBalances();
+		await this.getTotalSupply();
 		await this.getTokenPrice();
+		await this.getInitRebasedTime();
+		this.getSecondsPastLastRebased();
 	}
 
 	connectWallet = async () => {
