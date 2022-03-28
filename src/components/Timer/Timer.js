@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import EtherContext from '../../context/EtherContext.js';
 import Countdown from 'react-countdown';
 import useStyles from './Timer.styles.js';
 
 const Timer = () => {
+  const { rebaseDelay } = useContext(EtherContext);
   const { classes } = useStyles();
 
   const defaultDelay = 900000;
   const [countdownKey, setCountdownKey] = useState(1);
   const [data, setData] = useState({ date: Date.now(), delay: defaultDelay });
+
+  console.log(rebaseDelay);
+  useEffect(() => {
+    if (rebaseDelay) {
+      const delay = parseInt(rebaseDelay, 10) - Date.now();
+      localStorage.setItem('end_date', JSON.stringify(Date.now() + delay));
+      setData({ date: Date.now(), delay: delay });
+    }
+  }, [rebaseDelay]);
 
   useEffect(() => {
     const savedDate = localStorage.getItem('end_date');
@@ -21,7 +32,6 @@ const Timer = () => {
           localStorage.removeItem('end_date');
         }
       } else {
-        console.log('Setting', currentTime, delay);
         setData({ date: currentTime, delay: delay });
       }
     }

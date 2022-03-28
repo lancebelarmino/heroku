@@ -109,6 +109,7 @@ const OtoFunctionBased = () => {
       await getTotalSupply();
       await getTaxReceiverBalances();
       await getTokenPrice();
+      await get;
     }
 
     getData();

@@ -54,6 +54,7 @@ export const EtherContextProvider = ({ children }) => {
   const [data, setData] = useState(defaultData);
   const [walletData, setWalletData] = useState(defaultWalletData);
   const [isLoading, setIsLoading] = useState(true);
+  const [rebaseDelay, setRebaseDelay] = useState(null);
 
   const avaxProvider = useMemo(() => new ethers.providers.getDefaultProvider('https://api.avax.network/ext/bc/C/rpc'), []);
   const wavaxContract = useMemo(() => new ethers.Contract('0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', wavaxAbi, avaxProvider), [avaxProvider]);
@@ -121,6 +122,20 @@ export const EtherContextProvider = ({ children }) => {
     });
   }, [otoContract, taxReceiverBalances.firepit]);
 
+  const getRebasedTime = async () => {
+    const startTime = await otoContract._initRebaseStartTime();
+    const startTimeNumber = startTime.toNumber();
+    const currentTime = Math.floor(new Date().getTime() / 1000.0); //use epochconverter.com 's way to get without milliseconds
+    const difference = currentTime - startTimeNumber; //900 because 60 * 15.
+    const secondsPastLastRebase = (difference % 900) * 1000;
+    const savedDate = Date.now() + secondsPastLastRebase;
+    // const delay = parseInt(savedDate, 10) - Date.now();
+
+    console.log(savedDate);
+
+    setRebaseDelay(savedDate);
+  };
+
   const connectWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
     await provider.send('eth_requestAccounts', []);
@@ -185,6 +200,7 @@ export const EtherContextProvider = ({ children }) => {
       await getTotalSupply();
       await getTaxReceiverBalances();
       getTokenPrice();
+      await getRebasedTime();
       calculateData();
       setIsLoading(false);
     }
@@ -198,7 +214,7 @@ export const EtherContextProvider = ({ children }) => {
     }
   }, [signerAddy, calculateWallet]);
 
-  return <EtherContext.Provider value={{ isLoading, data, signerAddy, connectWallet, walletData, calculateCompoundingRate }}>{children}</EtherContext.Provider>;
+  return <EtherContext.Provider value={{ isLoading, data, signerAddy, connectWallet, walletData, calculateCompoundingRate, rebaseDelay }}>{children}</EtherContext.Provider>;
 };
 
 export default EtherContext;
