@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import EtherContext from '../../context/EtherContext';
 import { Title, Divider, Text } from '@mantine/core';
+import { motion } from 'framer-motion';
+import { contentVariant } from '../../styles/framer-variants';
 import ScreenSection from '../../components/Layouts/ScreenSection';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
@@ -34,7 +36,7 @@ const Account = () => {
 
   return (
     <ScreenSection>
-      <div className={classes.btn}>
+      <motion.div className={classes.btn} variants={contentVariant} custom={1}>
         {signerAddy ? (
           <ConnectedMessage />
         ) : (
@@ -42,13 +44,28 @@ const Account = () => {
             Connect Wallet
           </Button>
         )}
-      </div>
+      </motion.div>
 
-      <section className={classes.row}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={2}>
         <Card>
           <div className={classes.grid}>
-            <CardItem type="icon" layout="flex" data={{ icon: Balance, title: walletData.userBalance, description: 'Your Balance' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: APY, title: walletData.apy, description: 'APY' }} />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: Balance,
+                title: walletData.userBalance,
+                description: 'Your Balance',
+              }}
+            />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{ icon: APY, title: walletData.apy, description: 'APY' }}
+            />
             <CardItem type="custom">
               <div className={classes.cardItem}>
                 <NextRebase />
@@ -62,9 +79,12 @@ const Account = () => {
             </CardItem>
           </div>
         </Card>
-      </section>
+      </motion.section>
 
-      <section className={classes.row}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={3}>
         <Card>
           <div>
             <Title className={classes.title} order={5}>
@@ -76,7 +96,7 @@ const Account = () => {
             </table>
           </div>
         </Card>
-      </section>
+      </motion.section>
     </ScreenSection>
   );
 };

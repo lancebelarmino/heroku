@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import EtherContext from '../../context/EtherContext';
 import { SimpleGrid, Text } from '@mantine/core';
+import { motion } from 'framer-motion';
+import { contentVariant } from '../../styles/framer-variants';
 import ScreenSection from '../../components/Layouts/ScreenSection';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
@@ -23,12 +25,12 @@ import { ReactComponent as CauldronSupply } from '../../assets/screen-cauldron-s
 import useStyles from './Dashboard.styles.js';
 
 const Dashboard = () => {
-  const { data, signerAddy, connectWallet } = useContext(EtherContext);
+  const { dashboardData, signerAddy, connectWallet } = useContext(EtherContext);
   const { classes } = useStyles();
 
   return (
     <ScreenSection>
-      <div className={classes.btn}>
+      <motion.div className={classes.btn} variants={contentVariant} custom={1}>
         {signerAddy ? (
           <ConnectedMessage />
         ) : (
@@ -36,13 +38,32 @@ const Dashboard = () => {
             Connect Wallet
           </Button>
         )}
-      </div>
+      </motion.div>
 
-      <section className={classes.row}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={2}>
         <Card>
           <div className={classes.grid}>
-            <CardItem type="icon" layout="flex" data={{ icon: MarketCap, title: `$${data.marketCap}`, description: 'Market Cap' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: OtoPrice, title: `$${data.otoPrice}`, description: 'OTO Protocol Price' }} />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: MarketCap,
+                title: `$${dashboardData.marketCap}`,
+                description: 'Market Cap',
+              }}
+            />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: OtoPrice,
+                title: `$${dashboardData.otoPrice}`,
+                description: 'OTO Protocol Price',
+              }}
+            />
             <CardItem type="custom">
               <div className={classes.cardItem}>
                 <NextRebase />
@@ -54,36 +75,117 @@ const Dashboard = () => {
                 </div>
               </div>
             </CardItem>
-            <CardItem type="icon" layout="flex" data={{ icon: TotalSupply, title: data.totalSupply, description: 'Total Supply' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: CirculatingSupply, title: data.circulatingSupply, description: 'Circulating Supply' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: BackedLiquidity, title: data.backedLiquidity, description: 'Backed Liquidity' }} />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: TotalSupply,
+                title: dashboardData.totalSupply,
+                description: 'Total Supply',
+              }}
+            />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: CirculatingSupply,
+                title: dashboardData.circulatingSupply,
+                description: 'Circulating Supply',
+              }}
+            />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: BackedLiquidity,
+                title: dashboardData.backedLiquidity,
+                description: 'Backed Liquidity',
+              }}
+            />
           </div>
         </Card>
-      </section>
+      </motion.section>
 
-      <section className={classes.row}>
-        <SimpleGrid cols={3} spacing={40} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={3}>
+        <SimpleGrid
+          cols={3}
+          spacing={40}
+          breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
           <Card>
-            <CardItem type="icon" layout="center" data={{ icon: AvaxLiquidity, title: `$${data.avaxLiquidity}`, description: 'AVAX Liquidity Value' }} />
+            <CardItem
+              type="icon"
+              layout="center"
+              data={{
+                icon: AvaxLiquidity,
+                title: `$${dashboardData.avaxLiquidity}`,
+                description: 'AVAX Liquidity Value',
+              }}
+            />
           </Card>
           <Card>
-            <CardItem type="icon" layout="center" data={{ icon: MarketTreasury, title: `$${data.marketTreasury}`, description: 'Market Value Of Treasury Asset' }} />
+            <CardItem
+              type="icon"
+              layout="center"
+              data={{
+                icon: MarketTreasury,
+                title: `$${dashboardData.marketTreasury}`,
+                description: 'Market Value Of Treasury Asset',
+              }}
+            />
           </Card>
           <Card>
-            <CardItem type="icon" layout="center" data={{ icon: OtoVault, title: `$${data.otoVault}`, description: 'OTO Vault Value' }} />
+            <CardItem
+              type="icon"
+              layout="center"
+              data={{
+                icon: OtoVault,
+                title: `$${dashboardData.otoVault}`,
+                description: 'OTO Vault Value',
+              }}
+            />
           </Card>
         </SimpleGrid>
-      </section>
+      </motion.section>
 
-      <section className={classes.row}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={4}>
         <Card>
           <div className={classes.grid}>
-            <CardItem type="icon" layout="flex" data={{ icon: CauldronRank, title: data.cauldronRank, description: '# Value Of The Cauldron ' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: CauldronValue, title: `$${data.cauldronValue}`, description: '$ Value Of The Cauldron ' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: CauldronSupply, title: `${data.cauldronSupply}%`, description: '% The Cauldron Supply' }} />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: CauldronRank,
+                title: dashboardData.cauldronRank,
+                description: '# Value Of The Cauldron ',
+              }}
+            />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: CauldronValue,
+                title: `$${dashboardData.cauldronValue}`,
+                description: '$ Value Of The Cauldron ',
+              }}
+            />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: CauldronSupply,
+                title: `${dashboardData.cauldronSupply}%`,
+                description: '% The Cauldron Supply',
+              }}
+            />
           </div>
         </Card>
-      </section>
+      </motion.section>
     </ScreenSection>
   );
 };

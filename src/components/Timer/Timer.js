@@ -4,21 +4,20 @@ import Countdown from 'react-countdown';
 import useStyles from './Timer.styles.js';
 
 const Timer = () => {
-  const { rebaseDelay } = useContext(EtherContext);
+  const { dashboardData } = useContext(EtherContext);
   const { classes } = useStyles();
 
   const defaultDelay = 900000;
   const [countdownKey, setCountdownKey] = useState(1);
   const [data, setData] = useState({ date: Date.now(), delay: defaultDelay });
 
-  console.log(rebaseDelay);
   useEffect(() => {
-    if (rebaseDelay) {
-      const delay = parseInt(rebaseDelay, 10) - Date.now();
+    if (dashboardData.rebaseDelay) {
+      const delay = parseInt(dashboardData.rebaseDelay, 10) - Date.now();
       localStorage.setItem('end_date', JSON.stringify(Date.now() + delay));
       setData({ date: Date.now(), delay: delay });
     }
-  }, [rebaseDelay]);
+  }, [dashboardData.rebaseDelay]);
 
   useEffect(() => {
     const savedDate = localStorage.getItem('end_date');
@@ -51,12 +50,18 @@ const Timer = () => {
       onStart={() => {
         if (localStorage.getItem('end_date') === null) {
           console.log('Set');
-          localStorage.setItem('end_date', JSON.stringify(data.date + data.delay));
+          localStorage.setItem(
+            'end_date',
+            JSON.stringify(data.date + data.delay)
+          );
         }
       }}
       onComplete={() => {
         if (localStorage.getItem('end_date') != null) {
-          localStorage.setItem('end_date', JSON.stringify(Date.now() + defaultDelay));
+          localStorage.setItem(
+            'end_date',
+            JSON.stringify(Date.now() + defaultDelay)
+          );
         }
         setData({ date: Date.now(), delay: defaultDelay });
         setCountdownKey((prevData) => prevData + 1);

@@ -1,6 +1,16 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
-import { Title, Text, Grid, NumberInput, Slider, Group, SimpleGrid } from '@mantine/core';
+import {
+  Title,
+  Text,
+  Grid,
+  NumberInput,
+  Slider,
+  Group,
+  SimpleGrid,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { motion } from 'framer-motion';
+import { contentVariant } from '../../styles/framer-variants';
 import ScreenSection from '../../components/Layouts/ScreenSection';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
@@ -15,11 +25,21 @@ import ConnectedMessage from '../../components/Button/ConnectedMessage';
 import EtherContext from '../../context/EtherContext';
 
 const Calculator = () => {
-  const { data, walletData, signerAddy, connectWallet, calculateCompoundingRate } = useContext(EtherContext);
-  const [result, setResult] = useState({ rewardAmount: 0, tokenBalance: 0, amountOfTokenUSD: 0 });
+  const {
+    dashboardData,
+    walletData,
+    signerAddy,
+    connectWallet,
+    calculateCompoundingRate,
+  } = useContext(EtherContext);
+  const [result, setResult] = useState({
+    rewardAmount: 0,
+    tokenBalance: 0,
+    amountOfTokenUSD: 0,
+  });
   const form = useForm({
     initialValues: {
-      otoPrice: data.otoPrice,
+      otoPrice: dashboardData.otoPrice,
       otoAmount: 0,
       days: 182,
     },
@@ -28,19 +48,36 @@ const Calculator = () => {
 
   const handleCalculateChange = useCallback(
     (formValues) => {
-      const tokenAmount = formValues.tokenAmount ? formValues.tokenAmount : form.values.otoAmount;
-      const tokenPrice = formValues.tokenPrice ? formValues.tokenPrice : data.otoPrice;
+      const tokenAmount = formValues.tokenAmount
+        ? formValues.tokenAmount
+        : form.values.otoAmount;
+      const tokenPrice = formValues.tokenPrice
+        ? formValues.tokenPrice
+        : dashboardData.otoPrice;
       const days = form.values.days;
 
       const rebaseTimesPerDay = 96;
       const rebaseRate = 0.02355 / 100;
       const rewardAmount = (tokenAmount * 0.0002355).toFixed(5);
-      const amountOfToken = calculateCompoundingRate(tokenAmount, rebaseTimesPerDay * days, rebaseRate).toFixed(2);
+      const amountOfToken = calculateCompoundingRate(
+        tokenAmount,
+        rebaseTimesPerDay * days,
+        rebaseRate
+      ).toFixed(2);
       const amountOfTokenUSD = (amountOfToken * tokenPrice).toFixed(2);
 
-      setResult({ rewardAmount, tokenBalance: amountOfToken, amountOfTokenUSD });
+      setResult({
+        rewardAmount,
+        tokenBalance: amountOfToken,
+        amountOfTokenUSD,
+      });
     },
-    [form.values.otoAmount, form.values.days, data.otoPrice, calculateCompoundingRate]
+    [
+      form.values.otoAmount,
+      form.values.days,
+      dashboardData.otoPrice,
+      calculateCompoundingRate,
+    ]
   );
 
   useEffect(() => {
@@ -49,7 +86,7 @@ const Calculator = () => {
 
   return (
     <ScreenSection>
-      <div className={classes.btn}>
+      <motion.div className={classes.btn} variants={contentVariant} custom={1}>
         {signerAddy ? (
           <ConnectedMessage />
         ) : (
@@ -57,9 +94,12 @@ const Calculator = () => {
             Connect Wallet
           </Button>
         )}
-      </div>
+      </motion.div>
 
-      <section className={classes.row}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={2}>
         <Card>
           <div className={classes.header}>
             <Title className={classes.title} order={2}>
@@ -88,7 +128,7 @@ const Calculator = () => {
 
             <Grid.Col md={6}>
               <NumberInput
-                value={parseFloat(data.otoPrice)}
+                value={parseFloat(dashboardData.otoPrice)}
                 label="OTO Protocol Price"
                 placeholder="Price Of OTO Protocol"
                 decimalSeparator="."
@@ -127,27 +167,69 @@ const Calculator = () => {
             </Grid.Col>
           </Grid>
         </Card>
-      </section>
+      </motion.section>
 
-      <section className={classes.row}>
-        <SimpleGrid cols={3} spacing={40} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={3}>
+        <SimpleGrid
+          cols={3}
+          spacing={40}
+          breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
           <Card>
-            <CardItem type="icon" layout="center" data={{ title: result.rewardAmount, description: 'Next Reward Amount' }} />
+            <CardItem
+              type="icon"
+              layout="center"
+              data={{
+                title: result.rewardAmount,
+                description: 'Next Reward Amount',
+              }}
+            />
           </Card>
           <Card>
-            <CardItem type="icon" layout="center" data={{ title: parseFloat(result.tokenBalance).toFixed(2), description: 'TOKEN Balance' }} />
+            <CardItem
+              type="icon"
+              layout="center"
+              data={{
+                title: parseFloat(result.tokenBalance).toFixed(2),
+                description: 'TOKEN Balance',
+              }}
+            />
           </Card>
           <Card>
-            <CardItem type="icon" layout="center" data={{ title: `$${result.amountOfTokenUSD}`, description: 'Total USD Balance' }} />
+            <CardItem
+              type="icon"
+              layout="center"
+              data={{
+                title: `$${result.amountOfTokenUSD}`,
+                description: 'Total USD Balance',
+              }}
+            />
           </Card>
         </SimpleGrid>
-      </section>
+      </motion.section>
 
-      <section className={classes.row}>
+      <motion.section
+        className={classes.row}
+        variants={contentVariant}
+        custom={4}>
         <Card>
           <div className={classes.grid}>
-            <CardItem type="icon" layout="flex" data={{ icon: Balance, title: walletData.userBalance.toFixed(2), description: 'Your Balance' }} />
-            <CardItem type="icon" layout="flex" data={{ icon: APY, title: '392,537%', description: 'APY' }} />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{
+                icon: Balance,
+                title: walletData.userBalance.toFixed(2),
+                description: 'Your Balance',
+              }}
+            />
+            <CardItem
+              type="icon"
+              layout="flex"
+              data={{ icon: APY, title: '392,537%', description: 'APY' }}
+            />
             <CardItem type="custom">
               <div className={classes.cardItem}>
                 <NextRebase />
@@ -161,7 +243,7 @@ const Calculator = () => {
             </CardItem>
           </div>
         </Card>
-      </section>
+      </motion.section>
     </ScreenSection>
   );
 };

@@ -18,6 +18,7 @@ const defaultData = {
   cauldronRank: 0,
   cauldronValue: 0,
   cauldronSupply: 0,
+  rebaseDelay: 0,
 };
 
 const defaultWalletData = {
@@ -31,18 +32,6 @@ const defaultWalletData = {
 };
 
 export const EtherContextProvider = ({ children }) => {
-  const [avaxPrice, setAvaxPrice] = useState(0);
-  const [otoPrice, setOtoPrice] = useState(0);
-  const [tokenSupply, setTokenSupply] = useState({ totalSupply: 0, circulatingSupply: 0, firepitPercentage: 0 });
-  const [taxReceiverBalances, setTaxReceiverBalances] = useState({
-    firepit: 0,
-    vault: 0,
-    treasury: 0,
-  });
-  const [lpBalance, setLPBalance] = useState({
-    avax: null,
-    token: null,
-  });
   const [signerAddy, setSignerAddy] = useState(() => {
     const stickyValue = sessionStorage.getItem('signerAddy');
     return stickyValue !== null ? JSON.parse(stickyValue) : null;
@@ -51,14 +40,35 @@ export const EtherContextProvider = ({ children }) => {
     const stickyValue = sessionStorage.getItem('signerBalance');
     return stickyValue !== null ? JSON.parse(stickyValue) : null;
   });
-  const [data, setData] = useState(defaultData);
+  const [dashboardData, setDashboardData] = useState(defaultData);
   const [walletData, setWalletData] = useState(defaultWalletData);
   const [isLoading, setIsLoading] = useState(true);
-  const [rebaseDelay, setRebaseDelay] = useState(null);
 
-  const avaxProvider = useMemo(() => new ethers.providers.getDefaultProvider('https://api.avax.network/ext/bc/C/rpc'), []);
-  const wavaxContract = useMemo(() => new ethers.Contract('0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7', wavaxAbi, avaxProvider), [avaxProvider]);
-  const otoContract = useMemo(() => new ethers.Contract('0x3e5a9F09923936427aD6e487b24E23a862FCf6b7', otoAbi, avaxProvider), [avaxProvider]);
+  const avaxProvider = useMemo(
+    () =>
+      new ethers.providers.getDefaultProvider(
+        'https://api.avax.network/ext/bc/C/rpc'
+      ),
+    []
+  );
+  const wavaxContract = useMemo(
+    () =>
+      new ethers.Contract(
+        '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+        wavaxAbi,
+        avaxProvider
+      ),
+    [avaxProvider]
+  );
+  const otoContract = useMemo(
+    () =>
+      new ethers.Contract(
+        '0x3e5a9F09923936427aD6e487b24E23a862FCf6b7',
+        otoAbi,
+        avaxProvider
+      ),
+    [avaxProvider]
+  );
   const firepitAddress = '0x000000000000000000000000000000000000dEaD';
   const treasuryAddress = '0xa225478725BE5F5ae612182Db99547e4dA86E66E';
   const vaultAddress = '0xAc9c036aF64Ad44a83acB7786e6942944949147D';
@@ -77,14 +87,27 @@ export const EtherContextProvider = ({ children }) => {
     for (var i = 0; i < rebaseTimes; i++) {
       amount += amount * rate;
     }
+
     return amount;
   };
+
+  const getAvaxPrice = useCallback(async () => {
+    const response = await Axios.get(
+      'https://api.coinstats.app/public/v1/coins/avalanche-2'
+    );
+    const avaxPrice = response.data.coin.price;
+
+    return avaxPrice;
+  }, []);
 
   const getLPBalance = useCallback(async () => {
     const avaxBalance = await wavaxContract.balanceOf(lpPair);
     const tokenBalance = await otoContract.balanceOf(lpPair);
 
-    setLPBalance({ avax: ethers.utils.formatUnits(avaxBalance, 18), token: tokenFormatEther(tokenBalance) });
+    return {
+      avax: ethers.utils.formatUnits(avaxBalance, 18),
+      token: tokenFormatEther(tokenBalance),
+    };
   }, [otoContract, wavaxContract]);
 
   const getTaxReceiverBalances = useCallback(async () => {
@@ -92,49 +115,51 @@ export const EtherContextProvider = ({ children }) => {
     const vaultBalance = await wavaxContract.balanceOf(vaultAddress);
     const treasuryBalance = await wavaxContract.balanceOf(treasuryAddress);
 
-    setTaxReceiverBalances({
+    return {
       firepit: tokenFormatEther(firepitBalance),
       vault: avaxTokenFormatEther(vaultBalance),
       treasury: avaxTokenFormatEther(treasuryBalance),
-    });
+    };
   }, [otoContract, wavaxContract]);
 
-  const getTokenPrice = useCallback(() => {
-    if (lpBalance.avax && lpBalance.token && avaxPrice) {
-      const avaxBalanceInUsd = lpBalance.avax * avaxPrice;
-      const tokenPrice = (avaxBalanceInUsd / lpBalance.token).toFixed(tokenDecimal);
+  const getTokenPrice = useCallback((lpAvax, lpToken, avaxPrice) => {
+    if (lpAvax && lpToken && avaxPrice) {
+      const avaxBalanceInUsd = lpAvax * avaxPrice;
+      const tokenPrice = (avaxBalanceInUsd / lpToken).toFixed(tokenDecimal);
 
-      setOtoPrice(tokenPrice);
+      return tokenPrice;
     }
-  }, [avaxPrice, lpBalance.avax, lpBalance.token]);
+  }, []);
 
-  const getTotalSupply = useCallback(async () => {
-    const response = await otoContract._totalSupply();
-    const firepitSupply = taxReceiverBalances.firepit;
-    const totalSupply = tokenFormatEther(response);
-    const firepitPercentage = ((firepitSupply / totalSupply) * 100).toFixed(2);
-    const circulatingSupply = (totalSupply - firepitSupply).toFixed(2);
+  const getTotalSupply = useCallback(
+    async (trbFirepit) => {
+      const response = await otoContract._totalSupply();
+      const firepitSupply = trbFirepit;
+      const totalSupply = tokenFormatEther(response);
+      const firepitPercentage = ((firepitSupply / totalSupply) * 100).toFixed(
+        2
+      );
+      const circulatingSupply = (totalSupply - firepitSupply).toFixed(2);
 
-    setTokenSupply({
-      totalSupply: totalSupply,
-      circulatingSupply: circulatingSupply,
-      firepitPercentage: firepitPercentage,
-    });
-  }, [otoContract, taxReceiverBalances.firepit]);
+      return {
+        totalSupply,
+        circulatingSupply,
+        firepitPercentage,
+      };
+    },
+    [otoContract]
+  );
 
-  const getRebasedTime = async () => {
+  const getRebasedTime = useCallback(async () => {
     const startTime = await otoContract._initRebaseStartTime();
     const startTimeNumber = startTime.toNumber();
-    const currentTime = Math.floor(new Date().getTime() / 1000.0); //use epochconverter.com 's way to get without milliseconds
-    const difference = currentTime - startTimeNumber; //900 because 60 * 15.
+    const currentTime = Math.floor(new Date().getTime() / 1000.0);
+    const difference = currentTime - startTimeNumber;
     const secondsPastLastRebase = (difference % 900) * 1000;
     const savedDate = Date.now() + secondsPastLastRebase;
-    // const delay = parseInt(savedDate, 10) - Date.now();
 
-    console.log(savedDate);
-
-    setRebaseDelay(savedDate);
-  };
+    return savedDate;
+  }, [otoContract]);
 
   const connectWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
@@ -151,10 +176,36 @@ export const EtherContextProvider = ({ children }) => {
     setSignerAddy(signerAddy);
   };
 
-  const calculateData = useCallback(() => {
-    setData({
-      marketCap: (otoPrice * (tokenSupply.totalSupply - taxReceiverBalances.firepit)).toFixed(2),
-      otoPrice: otoPrice,
+  const calculateWallet = useCallback(() => {
+    setWalletData({
+      userBalance: signerBalance,
+      apy: '392,537%',
+      otoPrice: dashboardData.otoPrice,
+      rewardYield: '0.02355%',
+      rewardAmount: (signerBalance * 0.0002355).toFixed(tokenDecimal),
+      roi: '11.96%',
+      roiAmount: calculateCompoundingRate(
+        signerBalance,
+        480,
+        0.0002355
+      ).toFixed(tokenDecimal),
+    });
+  }, [signerBalance, dashboardData.otoPrice]);
+
+  const fetchData = useCallback(async () => {
+    const avaxPrice = await getAvaxPrice();
+    const lpBalance = await getLPBalance();
+    const taxReceiverBalances = await getTaxReceiverBalances();
+    const otoPrice = getTokenPrice(lpBalance.avax, lpBalance.token, avaxPrice);
+    const tokenSupply = await getTotalSupply(taxReceiverBalances.firepit);
+    const rebaseDelay = await getRebasedTime();
+
+    setDashboardData({
+      marketCap: (
+        otoPrice *
+        (tokenSupply.totalSupply - taxReceiverBalances.firepit)
+      ).toFixed(2),
+      otoPrice,
       totalSupply: parseFloat(tokenSupply.totalSupply).toFixed(2),
       circulatingSupply: tokenSupply.circulatingSupply,
       backedLiquidity: '100%',
@@ -164,49 +215,24 @@ export const EtherContextProvider = ({ children }) => {
       cauldronRank: parseFloat(taxReceiverBalances.firepit).toFixed(2),
       cauldronValue: (taxReceiverBalances.firepit * otoPrice).toFixed(2),
       cauldronSupply: tokenSupply.firepitPercentage,
+      rebaseDelay,
     });
-  }, [
-    otoPrice,
-    avaxPrice,
-    lpBalance.avax,
-    taxReceiverBalances.firepit,
-    taxReceiverBalances.treasury,
-    taxReceiverBalances.vault,
-    tokenSupply.circulatingSupply,
-    tokenSupply.totalSupply,
-    tokenSupply.firepitPercentage,
-  ]);
 
-  const calculateWallet = useCallback(() => {
-    setWalletData({
-      userBalance: signerBalance,
-      apy: '392,537%',
-      otoPrice: otoPrice,
-      rewardYield: '0.02355%',
-      rewardAmount: (signerBalance * 0.0002355).toFixed(tokenDecimal),
-      roi: '11.96%',
-      roiAmount: calculateCompoundingRate(signerBalance, 480, 0.0002355).toFixed(tokenDecimal),
-    });
-  }, [signerBalance, otoPrice]);
+    setIsLoading(false);
+  }, [
+    getAvaxPrice,
+    getLPBalance,
+    getTaxReceiverBalances,
+    getTokenPrice,
+    getTotalSupply,
+    getRebasedTime,
+  ]);
 
   useEffect(() => {
     setIsLoading(true);
 
-    async function getData() {
-      await Axios.get('https://api.coinstats.app/public/v1/coins/avalanche-2').then((response) => {
-        setAvaxPrice(response.data.coin.price);
-      });
-      await getLPBalance();
-      await getTotalSupply();
-      await getTaxReceiverBalances();
-      getTokenPrice();
-      await getRebasedTime();
-      calculateData();
-      setIsLoading(false);
-    }
-
-    getData();
-  }, [getLPBalance, getTotalSupply, getTaxReceiverBalances, getTokenPrice, calculateData]);
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     if (signerAddy) {
@@ -214,7 +240,19 @@ export const EtherContextProvider = ({ children }) => {
     }
   }, [signerAddy, calculateWallet]);
 
-  return <EtherContext.Provider value={{ isLoading, data, signerAddy, connectWallet, walletData, calculateCompoundingRate, rebaseDelay }}>{children}</EtherContext.Provider>;
+  return (
+    <EtherContext.Provider
+      value={{
+        isLoading,
+        dashboardData,
+        signerAddy,
+        connectWallet,
+        walletData,
+        calculateCompoundingRate,
+      }}>
+      {children}
+    </EtherContext.Provider>
+  );
 };
 
 export default EtherContext;
