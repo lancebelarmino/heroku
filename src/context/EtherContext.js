@@ -63,7 +63,7 @@ export const EtherContextProvider = ({ children }) => {
   const otoContract = useMemo(
     () =>
       new ethers.Contract(
-        '0x3e5a9F09923936427aD6e487b24E23a862FCf6b7',
+        '0x0aC80E1753deA5e298E8a2b6CF53f161937806A1',
         otoAbi,
         avaxProvider
       ),
@@ -72,7 +72,7 @@ export const EtherContextProvider = ({ children }) => {
   const firepitAddress = '0x000000000000000000000000000000000000dEaD';
   const treasuryAddress = '0xa225478725BE5F5ae612182Db99547e4dA86E66E';
   const vaultAddress = '0xAc9c036aF64Ad44a83acB7786e6942944949147D';
-  const lpPair = '0x59Bd5b0edEDb3f4f5b37CB16F07636152FDb418c';
+  const lpPair = '0xA3cee13997444Ba518f0aebc12e7D155D9b03b22';
   const tokenDecimal = 5;
 
   const tokenFormatEther = (value) => {

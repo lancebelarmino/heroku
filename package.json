@@ -1,5 +1,6 @@
 {
   "name": "web3-app",
+  "homepage": "https://app.otoprotocol.info/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
