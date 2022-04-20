@@ -36,10 +36,6 @@ export const EtherContextProvider = ({ children }) => {
     const stickyValue = sessionStorage.getItem('signerAddy');
     return stickyValue !== null ? JSON.parse(stickyValue) : null;
   });
-  const [signerBalance, setSignerBalance] = useState(() => {
-    const stickyValue = sessionStorage.getItem('signerBalance');
-    return stickyValue !== null ? JSON.parse(stickyValue) : null;
-  });
   const [dashboardData, setDashboardData] = useState(defaultData);
   const [walletData, setWalletData] = useState(defaultWalletData);
   const [isLoading, setIsLoading] = useState(true);
@@ -161,36 +157,39 @@ export const EtherContextProvider = ({ children }) => {
     return savedDate;
   }, [otoContract]);
 
+  const getUserBalance = useCallback(async () => {
+    const balancePromise = await otoContract.balanceOf(signerAddy);
+    const balance = tokenFormatEther(balancePromise);
+    const parsedBalance = parseFloat(balance);
+
+    return parsedBalance;
+  }, [otoContract, signerAddy]);
+
   const connectWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
     await provider.send('eth_requestAccounts', []);
     const signer = await provider.getSigner();
     const signerAddy = await signer.getAddress();
-    const balancePromise = await otoContract.balanceOf(signerAddy);
-    const balance = tokenFormatEther(balancePromise);
-    const parsedBalance = parseFloat(balance);
 
     sessionStorage.setItem('signerAddy', JSON.stringify(signerAddy));
-    sessionStorage.setItem('signerBalance', JSON.stringify(parsedBalance));
-    setSignerBalance(parsedBalance);
     setSignerAddy(signerAddy);
   };
 
-  const calculateWallet = useCallback(() => {
+  const calculateWallet = useCallback(async () => {
+    const balance = await getUserBalance();
+
     setWalletData({
-      userBalance: signerBalance,
+      userBalance: balance,
       apy: '392,537%',
       otoPrice: dashboardData.otoPrice,
       rewardYield: '0.02355%',
-      rewardAmount: (signerBalance * 0.0002355).toFixed(tokenDecimal),
+      rewardAmount: (balance * 0.0002355).toFixed(tokenDecimal),
       roi: '11.96%',
-      roiAmount: calculateCompoundingRate(
-        signerBalance,
-        480,
-        0.0002355
-      ).toFixed(tokenDecimal),
+      roiAmount: calculateCompoundingRate(balance, 480, 0.0002355).toFixed(
+        tokenDecimal
+      ),
     });
-  }, [signerBalance, dashboardData.otoPrice]);
+  }, [getUserBalance, dashboardData.otoPrice]);
 
   const fetchData = useCallback(async () => {
     const avaxPrice = await getAvaxPrice();
@@ -230,7 +229,6 @@ export const EtherContextProvider = ({ children }) => {
 
   useEffect(() => {
     setIsLoading(true);
-
     fetchData();
   }, [fetchData]);
 
@@ -238,7 +236,7 @@ export const EtherContextProvider = ({ children }) => {
     if (signerAddy) {
       calculateWallet();
     }
-  }, [signerAddy, calculateWallet]);
+  }, [signerAddy, calculateWallet, getUserBalance]);
 
   return (
     <EtherContext.Provider

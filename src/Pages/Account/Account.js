@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import EtherContext from '../../context/EtherContext';
 import { Title, Divider, Text } from '@mantine/core';
 import { motion } from 'framer-motion';
@@ -33,6 +33,8 @@ const Account = () => {
       <td>{item.price}</td>
     </tr>
   ));
+
+  useEffect(() => {}, []);
 
   return (
     <ScreenSection>

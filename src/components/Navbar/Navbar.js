@@ -15,10 +15,30 @@ import useStyles from './Navbar.styles';
 const menu = [
   { link: '/dashboard', label: 'Dashboard', icon: Dashboard, isScreen: true },
   { link: '/account', label: 'Account', icon: Account, isScreen: true },
-  { link: '/calculator', label: 'Calculator', icon: Calculator, isScreen: true },
-  { link: 'https://traderjoexyz.com/trade?outputCurrency=0x3e5a9f09923936427ad6e487b24e23a862fcf6b7#/', label: 'Swap', icon: Swap, isScreen: false },
-  { link: 'https://oto-protocol.gitbook.io/oto-protocol/', label: 'Whitepaper', icon: Whitepaper, isScreen: false },
-  { link: 'https://otoprotocol.info/', label: 'Oto Protocol', icon: Website, isScreen: false },
+  {
+    link: '/calculator',
+    label: 'Calculator',
+    icon: Calculator,
+    isScreen: true,
+  },
+  {
+    link: 'https://traderjoexyz.com/trade?outputCurrency=0x0aC80E1753deA5e298E8a2b6CF53f161937806A1#/',
+    label: 'Swap',
+    icon: Swap,
+    isScreen: false,
+  },
+  {
+    link: 'https://oto-protocol.gitbook.io/oto-protocol/',
+    label: 'Whitepaper',
+    icon: Whitepaper,
+    isScreen: false,
+  },
+  {
+    link: 'https://otoprotocol.info/',
+    label: 'Oto Protocol',
+    icon: Website,
+    isScreen: false,
+  },
 ];
 
 const Navbar = () => {
@@ -37,19 +57,23 @@ const Navbar = () => {
 
   const links = menu.map((item) => (
     <Anchor
-      className={cx(classes.link, { [classes.linkActive]: item.label === active })}
-      component={item.isScreen ? Link : 'a'}
-      to={item.isScreen ? item.link : ''}
-      href={item.link}
       key={item.label}
+      className={cx(classes.link, {
+        [classes.linkActive]: item.label === active,
+      })}
+      href={item.link}
       onClick={(e) => {
         if (item.isScreen) {
           setActive(item.label);
           setOpened(false);
         }
       }}
-      target={item.isScreen ? '' : '_blank'}
-      rel="noreferrer">
+      {...(item.isScreen && { component: Link, to: item.link })}
+      {...(!item.isScreen && {
+        href: item.link,
+        target: '_blank',
+        rel: 'noreferrer',
+      })}>
       <item.icon className={classes.linkIcon} />
       <span>{item.label}</span>
     </Anchor>
@@ -59,7 +83,12 @@ const Navbar = () => {
     <>
       {isTablet ? (
         <>
-          <Burger className={classes.burger} color="#242C4E" opened={opened} onClick={() => setOpened((o) => !o)} />
+          <Burger
+            className={classes.burger}
+            color="#242C4E"
+            opened={opened}
+            onClick={() => setOpened((o) => !o)}
+          />
           {opened && (
             <Nav
               classNames={{
